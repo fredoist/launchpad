@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 const Collection: NextPage = () => {
   return (
-    <Layout title="Stage">
+    <Layout title="Stage" secret>
       <section className="pt-32 pb-12">
         <h1 className="text-3xl font-bold">Stage for app</h1>
       </section>

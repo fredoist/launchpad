@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 const App: NextPage = () => {
   return (
-    <Layout title="Dashboard">
+    <Layout title="Dashboard" secret>
       <section className="pt-32 pb-12">
         <h1 className="text-3xl font-bold">Dashboard</h1>
       </section>
