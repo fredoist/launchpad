@@ -2,6 +2,7 @@ import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
 import { ThirdwebProvider } from "@thirdweb-dev/react/solana";
 import { Network } from "@thirdweb-dev/sdk/solana";
 import type { AppProps } from "next/app";
+import 'inter-ui'
 import 'tailwindcss/tailwind.css'
 
 const network: Network = "devnet";
