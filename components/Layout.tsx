@@ -1,5 +1,6 @@
 import Head from 'next/head';
 import { Header } from './Header';
+import { Sidebar } from './Sidebar';
 
 type LayoutProps = {
   title: string;
@@ -19,6 +20,7 @@ export const Layout: React.FC<LayoutProps> = ({ title, children }) => {
         />
       </Head>
       <Header />
+      <Sidebar />
       <div className='mx-5'>
         <div className="mx-auto max-w-6xl">
           {children}
