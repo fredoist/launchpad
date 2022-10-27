@@ -2,6 +2,9 @@
 module.exports = {
   reactStrictMode: true,
   basePath: '/launchpad',
+  images: {
+    domains: ['gateway.ipfscdn.io'],
+  },
   async redirects() {
     return [
       {

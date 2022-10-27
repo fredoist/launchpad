@@ -13,7 +13,7 @@ const App: NextPage = () => {
     sdk?.registry
       .getDeployedPrograms(sdk.wallet.getAddress() as string)
       .then((programs) => setCollections(programs));
-  }, []);
+  }, [sdk]);
 
   return (
     <Layout title="Dashboard" secret>
@@ -22,7 +22,7 @@ const App: NextPage = () => {
       </section>
       <section className="grid grid-cols-4 gap-5">
         {collections.map((collection) => (
-          <Link key={collection.programAddress} href={`/app/${collection.programAddress}`}>
+          <Link key={collection.programAddress} href={`/${collection.programAddress}`}>
             <article className="p-4 ring-1 ring-black/5 rounded-xl hover:ring-black/20 flex flex-col gap-2 cursor-pointer">
               <h3 className="font-semibold">{collection.programName}</h3>
             </article>
