@@ -11,19 +11,18 @@ type FormElements = HTMLFormControlsCollection & {
   symbol: HTMLInputElement;
   description: HTMLTextAreaElement;
   image: HTMLInputElement;
-  cover: HTMLInputElement;
 };
 
 export const Sidebar = () => {
   const visible = sidebar.use();
   const router = useRouter();
   const sdk = useSDK();
-  const [preview, setPreview] = useState({ image: null, cover: null });
+  const [preview, setPreview] = useState(null);
 
   const createCollection = (e: FormEvent) => {
     e.preventDefault();
     const form = e.target as HTMLFormElement;
-    const { name, symbol, description, image, cover } =
+    const { name, symbol, description, image } =
       form.elements as FormElements;
 
     toast
@@ -49,9 +48,9 @@ export const Sidebar = () => {
       )
       .then((collection) => {
         form.reset();
-        setPreview({ image: null, cover: null });
+        setPreview(null);
         sidebar.toggle();
-        router.push(`/app/${collection}`);
+        router.push(`/${collection}`);
       });
   };
 
@@ -61,7 +60,7 @@ export const Sidebar = () => {
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        setPreview((prev) => ({ ...prev, [target.name]: e.target?.result }));
+        setPreview(e.target?.result as any);
       };
       reader.readAsDataURL(file);
     }
@@ -83,28 +82,25 @@ export const Sidebar = () => {
         </div>
         <form onSubmit={createCollection}>
           <div className="relative bg-gray-50 h-32 rounded-xl border border-dashed border-black/20 mb-16">
-            <label
-              htmlFor="cover"
-              className="absolute inset-0 inline-flex items-center justify-center flex-col gap-2 cursor-pointer overflow-hidden rounded-xl"
+            <div
+              className="absolute inset-0 overflow-hidden rounded-xl"
             >
-              {preview.cover && (
+              {preview && (
                 <img
-                  src={preview.cover}
+                  src={preview}
                   alt="Cover preview"
-                  className="absolute inset-0"
+                  className="absolute inset-0 blur-3xl"
                 />
               )}
-              <PlusIcon className="w-6 h-6" />
-              <span className="text-sm">Add a cover image</span>
-            </label>
+            </div>
             <label
               htmlFor="image"
               className="absolute left-5 bottom-0 translate-y-1/2 inline-flex items-center justify-center cursor-pointer w-20 h-20 rounded-full bg-white border border-dashed border-black/20 overflow-hidden"
             >
-              {preview.image && (
+              {preview && (
                 <img
-                  src={preview.image}
-                  alt="Cover preview"
+                  src={preview}
+                  alt="Image preview"
                   className="absolute inset-0"
                 />
               )}
@@ -115,14 +111,6 @@ export const Sidebar = () => {
             type="file"
             name="image"
             id="image"
-            accept="image/*"
-            onChange={displayPreview}
-            hidden
-          />
-          <input
-            type="file"
-            name="cover"
-            id="cover"
             accept="image/*"
             onChange={displayPreview}
             hidden
