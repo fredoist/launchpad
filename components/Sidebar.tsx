@@ -1,8 +1,71 @@
+/* eslint-disable @next/next/no-img-element */
 import { XMarkIcon, PlusIcon } from '@heroicons/react/24/outline';
+import { useSDK } from '@thirdweb-dev/react/solana';
+import { ChangeEvent, FormEvent, useState } from 'react';
 import { sidebar } from 'stores/sidebar';
+import toast from 'react-hot-toast';
+import { useRouter } from 'next/router';
+
+type FormElements = HTMLFormControlsCollection & {
+  name: HTMLInputElement;
+  symbol: HTMLInputElement;
+  description: HTMLTextAreaElement;
+  image: HTMLInputElement;
+  cover: HTMLInputElement;
+};
 
 export const Sidebar = () => {
   const visible = sidebar.use();
+  const router = useRouter();
+  const sdk = useSDK();
+  const [preview, setPreview] = useState({ image: null, cover: null });
+
+  const createCollection = (e: FormEvent) => {
+    e.preventDefault();
+    const form = e.target as HTMLFormElement;
+    const { name, symbol, description, image, cover } =
+      form.elements as FormElements;
+
+    toast
+      .promise(
+        new Promise(async (resolve, reject) => {
+          try {
+            const collection = await sdk?.deployer.createNftCollection({
+              name: name.value,
+              symbol: symbol.value,
+              description: description.value,
+              image: image.files?.[0],
+            });
+            resolve(collection);
+          } catch (error) {
+            reject(error);
+          }
+        }),
+        {
+          loading: 'Creating collection...',
+          success: 'Collection created!',
+          error: 'Failed to create collection',
+        }
+      )
+      .then((collection) => {
+        form.reset();
+        setPreview({ image: null, cover: null });
+        sidebar.toggle();
+        router.push(`/app/${collection}`);
+      });
+  };
+
+  const displayPreview = (e: ChangeEvent<HTMLInputElement>) => {
+    const target = e.target;
+    const file = target.files?.[0] as Blob;
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setPreview((prev) => ({ ...prev, [target.name]: e.target?.result }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   return (
     <>
@@ -18,24 +81,52 @@ export const Sidebar = () => {
             <XMarkIcon className="w-6 h-6" />
           </button>
         </div>
-        <form>
+        <form onSubmit={createCollection}>
           <div className="relative bg-gray-50 h-32 rounded-xl border border-dashed border-black/20 mb-16">
             <label
               htmlFor="cover"
-              className="absolute inset-0 inline-flex items-center justify-center flex-col gap-2 cursor-pointer"
+              className="absolute inset-0 inline-flex items-center justify-center flex-col gap-2 cursor-pointer overflow-hidden rounded-xl"
             >
+              {preview.cover && (
+                <img
+                  src={preview.cover}
+                  alt="Cover preview"
+                  className="absolute inset-0"
+                />
+              )}
               <PlusIcon className="w-6 h-6" />
               <span className="text-sm">Add a cover image</span>
             </label>
             <label
               htmlFor="image"
-              className="absolute left-5 bottom-0 translate-y-1/2 inline-flex items-center justify-center cursor-pointer w-20 h-20 rounded-full bg-white border border-dashed border-black/20"
+              className="absolute left-5 bottom-0 translate-y-1/2 inline-flex items-center justify-center cursor-pointer w-20 h-20 rounded-full bg-white border border-dashed border-black/20 overflow-hidden"
             >
+              {preview.image && (
+                <img
+                  src={preview.image}
+                  alt="Cover preview"
+                  className="absolute inset-0"
+                />
+              )}
               <PlusIcon className="w-6 h-6" />
             </label>
           </div>
-          <input type="file" name="image" id="image" hidden />
-          <input type="file" name="cover" id="cover" hidden />
+          <input
+            type="file"
+            name="image"
+            id="image"
+            accept="image/*"
+            onChange={displayPreview}
+            hidden
+          />
+          <input
+            type="file"
+            name="cover"
+            id="cover"
+            accept="image/*"
+            onChange={displayPreview}
+            hidden
+          />
           <div className="flex gap-5">
             <FormInput label="Name" name="name" />
             <FormInput label="Symbol" name="symbol" className="w-1/3" />
@@ -48,7 +139,10 @@ export const Sidebar = () => {
               className="p-4 w-full border border-black/20 rounded-xl"
             />
           </div>
-          <button className="block bg-black text-white p-3 mt-5 w-full rounded-full">
+          <button
+            type="submit"
+            className="block bg-black text-white p-3 mt-5 w-full rounded-full"
+          >
             Create collection
           </button>
         </form>
