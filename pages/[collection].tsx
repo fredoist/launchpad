@@ -1,4 +1,8 @@
-import { useNFTs, useProgram, useProgramMetadata } from '@thirdweb-dev/react/solana';
+import {
+  useNFTs,
+  useProgram,
+  useProgramMetadata,
+} from '@thirdweb-dev/react/solana';
 import { Layout } from 'components/Layout';
 import { ManageTab } from 'components/ManageTab';
 import { NFTTab } from 'components/NFTTab';
@@ -6,6 +10,7 @@ import { NextPage } from 'next';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
+import { Tab } from '@headlessui/react';
 
 const tabs = ['NFTs', 'Manage', 'Analytics'];
 
@@ -13,7 +18,7 @@ const CollectionPage: NextPage = () => {
   const router = useRouter();
   const collection = router.query.collection as string;
   const { program } = useProgram(collection, 'nft-collection');
-  const { data: metadata } = useProgramMetadata(program)
+  const { data: metadata } = useProgramMetadata(program);
   const { data: nfts } = useNFTs(program);
   const [currentTab, setCurrentTab] = useState(0);
 
@@ -44,23 +49,46 @@ const CollectionPage: NextPage = () => {
         <h1 className="font-black text-3xl mb-2">{metadata?.name}</h1>
         <p className="max-w-xl">{metadata?.description}</p>
       </section>
-      <div className="flex gap-2 border-b border-black/5 mb-12">
-        {tabs.map((tab) => (
-          <button
-            key={tab}
-            className={`${
-              tabs[currentTab] === tab
-                ? 'border-black'
-                : 'border-transparent'
-            } text-sm font-semibold inline-block py-1 px-2 border-b-2`}
-            onClick={() => setCurrentTab(tabs.indexOf(tab))}
+      <Tab.Group>
+        <Tab.List className="flex gap-2 border-b border-black/5 mb-12">
+          <Tab
+            className={({ selected }) =>
+              `${
+                selected ? 'border-black font-medium' : 'border-transparent'
+              } focus:outline-none border-b-2 py-1 px-2`
+            }
           >
-            {tab}
-          </button>
-        ))}
-      </div>
-      {tabs[currentTab] === 'NFTs' && <NFTTab data={nfts} />}
-      {tabs[currentTab] === 'Manage' && <ManageTab address={collection as string} />}
+            NFTs
+          </Tab>
+          <Tab
+            className={({ selected }) =>
+              `${
+                selected ? 'border-black font-medium' : 'border-transparent'
+              } focus:outline-none border-b-2 py-1 px-2`
+            }
+          >
+            Manage
+          </Tab>
+          <Tab
+            disabled
+            className={({ selected }) =>
+              `${
+                selected ? 'border-black font-medium' : 'border-transparent'
+              } focus:outline-none border-b-2 py-1 px-2 cursor-not-allowed opacity-50`
+            }
+          >
+            Analytics
+          </Tab>
+        </Tab.List>
+        <Tab.Panels>
+          <Tab.Panel>
+            <NFTTab data={nfts} />
+          </Tab.Panel>
+          <Tab.Panel>
+            <ManageTab address={collection as string} />
+          </Tab.Panel>
+        </Tab.Panels>
+      </Tab.Group>
     </Layout>
   );
 };
