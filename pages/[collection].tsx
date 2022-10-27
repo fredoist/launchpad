@@ -1,6 +1,4 @@
 import { useNFTs, useProgram, useProgramMetadata } from '@thirdweb-dev/react/solana';
-import { NFT } from '@thirdweb-dev/sdk';
-import { NFTCollectionMetadataInput } from '@thirdweb-dev/sdk/solana';
 import { Layout } from 'components/Layout';
 import { ManageTab } from 'components/ManageTab';
 import { NFTTab } from 'components/NFTTab';
