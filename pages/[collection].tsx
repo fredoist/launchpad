@@ -2,10 +2,14 @@ import { useProgram } from '@thirdweb-dev/react/solana';
 import { NFT } from '@thirdweb-dev/sdk';
 import { NFTCollectionMetadataInput } from '@thirdweb-dev/sdk/solana';
 import { Layout } from 'components/Layout';
+import { ManageTab } from 'components/ManageTab';
+import { NFTTab } from 'components/NFTTab';
 import { NextPage } from 'next';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+
+const tabs = ['NFTs', 'Manage', 'Analytics'];
 
 const CollectionPage: NextPage = () => {
   const router = useRouter();
@@ -13,6 +17,7 @@ const CollectionPage: NextPage = () => {
   const { program } = useProgram(collection, 'nft-collection');
   const [metadata, setMetadata] = useState<NFTCollectionMetadataInput>();
   const [nfts, setNfts] = useState<NFT[]>([]);
+  const [currentTab, setCurrentTab] = useState(0);
 
   useEffect(() => {
     program?.getMetadata().then((metadata: any) => setMetadata(metadata));
@@ -21,7 +26,7 @@ const CollectionPage: NextPage = () => {
 
   return (
     <Layout title={`Collection`}>
-      <section className="pt-24 mb-12">
+      <section className="pt-24 mb-5">
         <div className="relative w-full rounded-xl h-40 bg-gray-100 mb-16">
           <div className="absolute inset-0 rounded-xl overflow-hidden">
             <Image
@@ -46,23 +51,23 @@ const CollectionPage: NextPage = () => {
         <h1 className="font-black text-3xl mb-2">{metadata?.name}</h1>
         <p className="max-w-xl">{metadata?.description}</p>
       </section>
-      <section className="grid grid-cols-4 grid-flow-dense pb-12">
-        {nfts.length > 0 &&
-          nfts.map((nft) => (
-            <article key={nft.metadata.id}>
-              <div className="relative w-60 h-60 rounded-xl overflow-hidden">
-                <Image
-                  src={nft.metadata.image as string}
-                  alt={nft.metadata.name as string}
-                  layout="fill"
-                  objectFit="cover"
-                  objectPosition="center"
-                />
-              </div>
-              <h3 className="font-semibold mt-4">{nft.metadata.name}</h3>
-            </article>
-          ))}
-      </section>
+      <div className="flex gap-2 border-b border-black/5 mb-12">
+        {tabs.map((tab) => (
+          <button
+            key={tab}
+            className={`${
+              tabs[currentTab] === tab
+                ? 'border-black'
+                : 'border-transparent'
+            } text-sm font-semibold inline-block py-1 px-2 border-b-2`}
+            onClick={() => setCurrentTab(tabs.indexOf(tab))}
+          >
+            {tab}
+          </button>
+        ))}
+      </div>
+      {tabs[currentTab] === 'NFTs' && <NFTTab nfts={nfts} />}
+      {tabs[currentTab] === 'Manage' && <ManageTab address={collection as string} />}
     </Layout>
   );
 };
