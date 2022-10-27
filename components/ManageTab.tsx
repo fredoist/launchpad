@@ -1,14 +1,15 @@
-import { useProgram, useSDK } from '@thirdweb-dev/react/solana';
-import { FormEvent } from 'react';
+import { useProgram } from '@thirdweb-dev/react/solana';
+import { ChangeEvent, FormEvent, useState } from 'react';
 import toast from 'react-hot-toast';
 
-export const ManageTab = ({ address }: {address: string}) => {
-  const {program} = useProgram(address,'nft-collection');
+export const ManageTab = ({ address }: { address: string }) => {
+  const { program } = useProgram(address, 'nft-collection');
+  const [preview, setPreview] = useState(null);
 
   const handleMint = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const form = e.target as HTMLFormElement
-    const { name, description, image } = form.elements as any
+    const form = e.target as HTMLFormElement;
+    const { name, description, image } = form.elements as any;
 
     toast.promise(
       new Promise(async (resolve, reject) => {
@@ -16,11 +17,11 @@ export const ManageTab = ({ address }: {address: string}) => {
           const id = program.mint({
             name: name.value,
             description: description.value,
-            image: image.files[0]
-          })
-          resolve(id)
+            image: image.files[0],
+          });
+          resolve(id);
         } catch (error) {
-          reject(error)
+          reject(error);
         }
       }),
       {
@@ -31,15 +32,45 @@ export const ManageTab = ({ address }: {address: string}) => {
     );
   };
 
+  const displayNFTPreview = (e: ChangeEvent<HTMLInputElement>) => {
+    const target = e.target;
+    const file = target.files?.[0] as Blob;
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setPreview(e.target?.result as any);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
     <section className="pb-12">
       <h3 className="font-semibold text-lg mb-5">Mint a new token</h3>
       <form onSubmit={handleMint} className="flex flex-col gap-4 max-w-md">
+        <label
+          htmlFor="nft-image"
+          className="relative flex items-center justify-center bg-gray-100 rounded-xl w-24 h-24 cursor-pointer overflow-hidden"
+        >
+          {preview && <img src={preview} alt="" className="absolute inset-0" />}
+          Image
+        </label>
+        <input
+          type="file"
+          name="image"
+          id="nft-image"
+          accept="image/*"
+          onChange={displayNFTPreview}
+          hidden
+        />
         <FormInput name="name" label="Name" />
         <FormInput name="description" label="Description" />
-        <label htmlFor="image" className="py-2 px-4 bg-gray-100 rounded-xl h-24 cursor-pointer">Image</label>
-        <input type="file" id="image" hidden />
-        <button type="submit" className="py-3 px-8 bg-black text-white rounded-full">Mint</button>
+        <button
+          type="submit"
+          className="py-3 px-8 bg-black text-white rounded-full"
+        >
+          Mint
+        </button>
       </form>
     </section>
   );
