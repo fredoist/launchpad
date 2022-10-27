@@ -33,17 +33,18 @@ const CollectionPage: NextPage = () => {
               className="blur-3xl"
             />
           </div>
-          <div className="absolute left-12 bottom-0 translate-y-1/2 rounded-full overflow-hidden bg-white">
+          <div className="absolute left-8 bottom-0 translate-y-1/2 rounded-full overflow-hidden bg-white w-24 h-24">
             <Image
               src={metadata?.image}
               alt={metadata?.name}
-              width={80}
-              height={80}
+              layout="fill"
+              objectFit="cover"
+              objectPosition="center"
             />
           </div>
         </div>
         <h1 className="font-black text-3xl mb-2">{metadata?.name}</h1>
-        <p className="text-sm">{metadata?.description}</p>
+        <p className="max-w-xl">{metadata?.description}</p>
       </section>
       <section className="grid grid-cols-4 gap-5">
         {nfts.length > 0 &&
