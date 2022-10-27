@@ -21,16 +21,17 @@ const CollectionPage: NextPage = () => {
 
   return (
     <Layout title={`Collection`}>
-      <section className="pt-24">
-        <div className="relative w-full rounded-xl h-32 bg-gray-100">
-          <div className="absolute inset-0">
-            {/* <Image
-              src={metadata?.cover}
+      <section className="pt-24 mb-12">
+        <div className="relative w-full rounded-xl h-40 bg-gray-100 mb-16">
+          <div className="absolute inset-0 rounded-xl overflow-hidden">
+            <Image
+              src={metadata?.image}
               alt=""
               layout="fill"
               objectFit="cover"
               objectPosition="center"
-            /> */}
+              className="blur-3xl"
+            />
           </div>
           <div className="absolute left-12 bottom-0 translate-y-1/2 rounded-full overflow-hidden bg-white">
             <Image
@@ -41,6 +42,24 @@ const CollectionPage: NextPage = () => {
             />
           </div>
         </div>
+        <h1 className="font-black text-3xl mb-2">{metadata?.name}</h1>
+        <p className="text-sm">{metadata?.description}</p>
+      </section>
+      <section className="grid grid-cols-4 gap-5">
+        {nfts.length > 0 &&
+          nfts.map((nft) => (
+            <article key={nft.metadata.id}>
+              <div className="w-full rounded-xl overflow-hidden">
+                <Image
+                  src={nft.metadata.image as string}
+                  alt={nft.metadata.name as string}
+                  width={180}
+                  height={180}
+                />
+              </div>
+              <h3 className="font-semibold">{nft.metadata.name}</h3>
+            </article>
+          ))}
       </section>
     </Layout>
   );
