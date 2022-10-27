@@ -81,7 +81,7 @@ export const Sidebar = () => {
           </button>
         </div>
         <form onSubmit={createCollection}>
-          <div className="relative bg-gray-50 h-32 rounded-xl border border-dashed border-black/20 mb-16">
+          <div className="relative bg-gray-50 h-32 rounded-xl mb-16">
             <div
               className="absolute inset-0 overflow-hidden rounded-xl"
             >
