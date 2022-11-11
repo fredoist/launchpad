@@ -52,7 +52,12 @@ export const ManageTab = ({ address }: { address: string }) => {
           htmlFor="nft-image"
           className="relative flex items-center justify-center bg-gray-100 rounded-xl w-24 h-24 cursor-pointer overflow-hidden"
         >
-          {preview && <img src={preview} alt="" className="absolute inset-0" />}
+          {preview && (
+            <picture>
+              <source srcSet={preview} type="image/png" />
+              <img src={preview} alt="Preview Image" className="absolute inset-0" />
+            </picture>
+          )}
           Image
         </label>
         <input

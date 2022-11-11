@@ -22,8 +22,7 @@ export const Sidebar = () => {
   const createCollection = (e: FormEvent) => {
     e.preventDefault();
     const form = e.target as HTMLFormElement;
-    const { name, symbol, description, image } =
-      form.elements as FormElements;
+    const { name, symbol, description, image } = form.elements as FormElements;
 
     toast
       .promise(
@@ -82,15 +81,16 @@ export const Sidebar = () => {
         </div>
         <form onSubmit={createCollection}>
           <div className="relative bg-gray-50 h-32 rounded-xl mb-16">
-            <div
-              className="absolute inset-0 overflow-hidden rounded-xl"
-            >
+            <div className="absolute inset-0 overflow-hidden rounded-xl">
               {preview && (
-                <img
-                  src={preview}
-                  alt="Cover preview"
-                  className="absolute inset-0 blur-3xl"
-                />
+                <picture>
+                  <source srcSet={preview} type="image/png" />
+                  <img
+                    src={preview}
+                    alt="Cover preview"
+                    className="absolute inset-0 blur-3xl"
+                  />
+                </picture>
               )}
             </div>
             <label
@@ -98,11 +98,14 @@ export const Sidebar = () => {
               className="absolute left-5 bottom-0 translate-y-1/2 inline-flex items-center justify-center cursor-pointer w-20 h-20 rounded-full bg-white border border-dashed border-black/20 overflow-hidden"
             >
               {preview && (
-                <img
-                  src={preview}
-                  alt="Image preview"
-                  className="absolute inset-0"
-                />
+                <picture>
+                  <source srcSet={preview} type="image/png" />
+                  <img
+                    src={preview}
+                    alt="Image preview"
+                    className="absolute inset-0"
+                  />
+                </picture>
               )}
               <PlusIcon className="w-6 h-6" />
             </label>
