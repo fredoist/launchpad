@@ -3,18 +3,26 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { sidebar } from 'stores/sidebar';
 import Confetti from 'react-confetti';
-import { useWindowSize } from 'react-use';
+import { useEffect, useState } from 'react';
 
 export const Header = () => {
   const wallet = useWallet();
 
   /** Temporary add react-confetti effect */
-  const { width, height } = useWindowSize();
+  const [windowSize, setWindowSize] = useState({width: 0, height: 0})
+  useEffect(() => {
+    const setSize = () => setWindowSize({width: window.innerWidth, height: window.innerHeight})
+    if (typeof window !== undefined) {
+      setSize()
+      window.addEventListener('resize', setSize)
+    }
+    return () => window.removeEventListener('resize', setSize)
+  }, [])
 
   return (
     <header className="fixed top-0 inset-x-0 z-10 bg-white/50 backdrop-blur">
       <div className="text-center p-2 bg-blue-700 text-white text-sm relative overflow-hidden">
-        <Confetti width={width} height={height} opacity={0.8} />
+        <Confetti width={windowSize.width} height={windowSize.height} opacity={0.8} />
         🎉 Launchpad won 2nd place for Solanathon!
         <a
           href="https://twitter.com/thirdweb/status/1590101360925495296"
